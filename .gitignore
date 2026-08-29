@@ -1,0 +1,15 @@
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+
+# Copyrighted source material and derived cover art -- not redistributable
+ref/
+
+# Generated audio and intermediates (all reproducible from ref/source.pdf)
+work/
+out/
+
+# Editor / OS
+.DS_Store
+*.swp
