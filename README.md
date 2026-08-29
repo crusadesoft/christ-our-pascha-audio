@@ -85,3 +85,50 @@ Review page (needs HTTP Range for seeking — the stock `http.server` will not d
 - **Keep derived files in sync.** `assemble.py` writes `chapters.json` because
   QA reads it; when only `chapters.py` wrote it, QA silently diffed new audio
   against stale text.
+
+## The review site (GitHub Pages)
+
+`docs/` is a self-contained static site. Enable Pages on the repo with
+**Source: main branch, /docs folder**.
+
+```
+docs/
+  index.html    reader: 78 audio tracks, 232 navigation marks, deep links
+  text.html     the complete narration text, print-styled
+  about.html    colophon: AI disclosure, sources, editorial decisions, checks
+  audio/*.mp3   78 tracks, ~351 MB, largest 8.9 MB
+  data.json     tracks + navigation marks + 5,863 timed cues
+  tracks.json   track manifest
+  feed.xml      podcast RSS
+```
+
+Rebuild after any change to the audio or text:
+
+```bash
+.venv/bin/python src/tracks.py                       # cut tracks from the master
+.venv/bin/python src/site.py                         # pages + data.json
+.venv/bin/python src/feed.py --base https://USER.github.io/REPO
+```
+
+### Why tracks and navigation marks differ
+
+The book has 232 sections, but 31 run under a minute and the shortest is
+2.4 seconds — fine as places to jump to, useless as files. Tracks merge
+sections under 3 minutes and split those over 25, giving 78 files of
+3.0–21.1 minutes. The reader maps global time to track + offset, so all 232
+marks stay available for navigation and deep links.
+
+### Deep links
+
+`#t=3600` opens at a timestamp; `#p=224` opens at a paragraph. The URL
+updates while playing, and **Copy link** puts the current moment on the
+clipboard — the intended way to report a mispronunciation.
+
+### Repository size
+
+The audio is ~351 MB committed directly. That is inside GitHub's 1 GB soft
+limit but makes clones slow. Git LFS is *not* a fix — Pages does not serve
+LFS objects. If the repo needs to stay small, host `audio/` elsewhere and
+point `data.json`/`feed.xml` at it.
+
+Pages bandwidth is a 100 GB/month soft limit — roughly 250 complete listens.
