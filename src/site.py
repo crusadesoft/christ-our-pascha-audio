@@ -276,18 +276,27 @@ and it has not been reviewed word-by-word against the printed text by ear.
 It is offered as a working draft for evaluation.</div>
 
 <h2>Source text</h2>
+<p>Read from the English PDF published by the Ukrainian Catholic Church at
+<a href="https://ukrcatholic.org/our-faith/our-spirituality/catechism-of-the-ukrainian-catholic-church">ukrcatholic.org</a>
+(<a href="https://ukrcatholic.org/fileadmin/user_upload/PDFs/Our_Faith/Christ-our-Pascha-Catechism-of-the-Ukrainian-Catholic-Church-by-Comission-for-the-Catehism-z-lib.org_.pdf">direct
+PDF</a>). No other text was used, and nothing was added.</p>
 <table>
 <tr><th>Work</th><td>Catechism of the Ukrainian Catholic Church: <em>Christ – Our Pascha</em></td></tr>
 <tr><th>Edition</th><td>English, Kyiv–Edmonton 2016; online corrected printing, Nov 2017</td></tr>
 <tr><th>Copyright</th><td>© 2016 Synod of the Ukrainian Greek-Catholic Church<br>
 © 2016 Commission for the Catechism of the UGCC</td></tr>
 <tr><th>ISBN</th><td>978–0–9809309–2–4</td></tr>
+<tr><th>Source file</th><td>3,430,406 bytes<br>
+<code style="font-size:11.5px">SHA-256 82f3622b69d3432de04a3f1c2cd330892e61050280bfc1fd5ea584920c609bf0</code><br>
+<span style="color:#98a2af">verified byte-identical to the file served by
+ukrcatholic.org</span></td></tr>
 <tr><th>Cover icon</th><td>The Descent into Hades, Volodymyr Sviderski,
 St. Josaphat Ukrainian Catholic Cathedral, Edmonton</td></tr>
 </table>
-<p style="font-size:14px;color:#98a2af">This recording is derived from a
-copyrighted work and is published only with the permission of the rights
-holders. It is not for sale.</p>
+<p style="font-size:14px;color:#98a2af">The catechism text is published freely
+online by the Church at the link above. This recording is a derivative work
+made from it, offered for review and published only with the permission of the
+rights holders. It is not for sale.</p>
 
 <h2>Voices</h2>
 <table>

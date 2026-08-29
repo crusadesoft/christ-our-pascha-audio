@@ -3,8 +3,15 @@
 Turns the UGCC catechism *Christ Our Pascha* (2016/2017 online edition, 368 pp)
 into a chaptered M4B audiobook, plus a synced-transcript review page.
 
-Personal-use build. The source PDF and cover are **not** in this repo
-(see `.gitignore`); put them at `ref/source.pdf` and `ref/cover.jpg`.
+The source PDF and cover are **not** in this repo (see `.gitignore`).
+The PDF is published freely by the Ukrainian Catholic Church:
+
+- <https://ukrcatholic.org/our-faith/our-spirituality/catechism-of-the-ukrainian-catholic-church>
+- Direct PDF (3,430,406 bytes, SHA-256 `82f3622b69d3432de04a3f1c2cd330892e61050280bfc1fd5ea584920c609bf0`)
+
+Save it as `ref/source.pdf` and the cover as `ref/cover.jpg`. `verify_text.py`
+checks the extraction against that exact file; a different printing would
+shift the page ranges in `extract.py`.
 
 ## Pipeline
 
