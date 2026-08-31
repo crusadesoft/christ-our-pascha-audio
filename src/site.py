@@ -31,12 +31,13 @@ NAV = """<nav class="nav">
 <span class="brand">__I_audio-lines__ Christ Our Pascha</span>
 <a href="index.html"{a0}>__I_headphones__<span>Listen</span></a>
 <a href="text.html"{a1}>__I_book-open__<span>Text</span></a>
-<a href="about.html"{a2}>__I_info__<span>About</span></a>
+<a href="subscribe.html"{a2}>__I_rss__<span>Subscribe</span></a>
+<a href="about.html"{a3}>__I_info__<span>About</span></a>
 </nav>"""
 
 def nav(active):
     return NAV.format(**{f"a{i}": ' class="on"' if i == active else ""
-                         for i in range(3)})
+                         for i in range(4)})
 
 # Shared unlock. The payload is AES-GCM; the password derives the key, so
 # stepping past the prompt in devtools yields nothing.
@@ -104,8 +105,6 @@ __NAV__
      <input type="search" id="q" placeholder="Search the text\u2026"></div>
    <button class="iconbtn" id="link" title="Copy a link to this moment">
      __I_link-2__<span>Copy link</span></button>
-   <button class="iconbtn" id="rss" title="Subscribe in a podcast app">
-     __I_rss__<span>Feed</span></button>
  </div>
  <div id="warn" style="display:none"></div>
  <div id="txt"><div class="inner"></div></div>
@@ -213,8 +212,6 @@ $('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();let n=0
  $('npSub').textContent=v?n+' matches':'Christ Our Pascha'});
 $('link').onclick=()=>{const u=location.origin+location.pathname+'#t='+Math.round(globalTime());
  navigator.clipboard.writeText(u).then(()=>toast('Link copied \u2014 opens here'),()=>toast(u))};
-$('rss').onclick=()=>{const u=location.href.split('#')[0].replace(/[^/]*$/,'')+'feed.xml';
- navigator.clipboard.writeText(u).then(()=>toast('Feed URL copied \u2014 paste it into a podcast app'),()=>toast(u))};
 function applyHash(){const h=location.hash;
  let m=h.match(/[#&]t=(\\d+(?:\\.\\d+)?)/); if(m){seekGlobal(parseFloat(m[1]),false);return true}
  m=h.match(/[#&]p=(\\d+)/);
@@ -325,20 +322,8 @@ Theotokos, Sheptytsky and others). Remaining pronunciation errors are the most
 likely defect, and the reason for this review.</div>
 
 <h2>Listening in a podcast app</h2>
-<p>The recording is also published as a podcast feed. Most podcast apps
-(Apple Podcasts, Overcast, Pocket Casts, Podcast Addict) let you add a feed by
-URL, and they handle offline download, resuming where you left off, and
-playback speed better than any web page can.</p>
-<p style="margin:14px 0"><code style="font-size:13px;user-select:all">__FEED__</code></p>
-<p style="font-size:14px;color:var(--muted)">In most apps: look for
-\u201cAdd a show by URL\u201d, \u201cAdd from URL\u201d, or
-\u201cSubscribe by URL\u201d, and paste the address above. On the
-<a href="index.html">Listen</a> page the <strong>Feed</strong> button copies it
-for you.</p>
-<div class="note"><strong>The feed is not password protected.</strong> Podcast
-apps cannot decrypt the payload the website uses, so anyone given the feed
-address can subscribe without the password. The episode addresses are not
-guessable, but please share the feed URL only with reviewers.</div>
+<p>The recording is also published as a podcast feed \u2014 see
+<a href="subscribe.html">Subscribe</a> for the address and how to add it.</p>
 
 <h2>Reporting a problem</h2>
 <p>On the <a href="index.html">Listen</a> page, press <strong>Copy link</strong>
@@ -402,6 +387,106 @@ gateStart(d=>{
 });
 </script></body></html>"""
 
+SUBSCRIBE = """<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
+<title>Christ Our Pascha \u2014 Subscribe</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.urlbox{display:flex;gap:9px;align-items:stretch;margin:18px 0 8px}
+#feedurl{flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--border);
+ color:var(--text);padding:13px 15px;border-radius:var(--radius);
+ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13.5px;
+ overflow-x:auto;white-space:nowrap;user-select:all;display:flex;align-items:center}
+#copy{background:var(--accent);color:#0b0f17;border:0;border-radius:var(--radius);
+ padding:0 20px;font-size:14px;font-weight:620;cursor:pointer;display:flex;
+ align-items:center;gap:8px;white-space:nowrap;transition:filter .14s}
+#copy:hover{filter:brightness(1.08)}
+#copy.done{background:var(--mint)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0}
+.steps li{counter-increment:s;position:relative;padding:0 0 0 38px;margin:0 0 15px;
+ color:#c9d0da;font-size:15px;line-height:1.6}
+.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:25px;
+ height:25px;border-radius:50%;background:var(--surface-3);color:var(--accent);
+ font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px;
+ margin:14px 0}
+.app{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+ padding:13px 15px}
+.app b{display:block;color:var(--text);font-size:14px;margin-bottom:3px;font-weight:620}
+.app span{color:var(--muted);font-size:13px;line-height:1.5}
+</style></head><body>
+__NAV__
+<div class="wrap">
+<h1>Listen in a podcast app</h1>
+<p class="lede">The recording is published as a podcast feed. Podcast apps
+handle offline download, resuming where you left off, and playback speed
+better than any web page \u2014 and you can listen in the car or with the
+screen off.</p>
+
+<h2>Feed address</h2>
+<div class="urlbox">
+ <div id="feedurl">__FEED__</div>
+ <button id="copy">__I_link-2__<span id="cl">Copy</span></button>
+</div>
+<p style="font-size:13.5px;color:var(--muted);margin:0">Copy this, then add it
+in your podcast app as described below.</p>
+
+<h2>How to add it</h2>
+<ol class="steps">
+<li>Copy the feed address above.</li>
+<li>Open your podcast app and find the option to add a show by URL. It is
+usually under a <em>+</em> button, or in Search, or in Settings \u2014 the exact
+wording differs by app (see below).</li>
+<li>Paste the address and confirm. All __NTR__ parts will appear as episodes,
+in order, oldest first.</li>
+<li>Play from the first episode. Most apps let you download everything for
+offline listening.</li>
+</ol>
+
+<div class="apps">
+<div class="app"><b>Apple Podcasts</b><span>Library \u2192 the \u2026 menu
+\u2192 <em>Add a Show by URL</em>. On iPhone, tap Library then the \u2026 at
+the top right.</span></div>
+<div class="app"><b>Overcast</b><span>The <em>+</em> at the top right \u2192
+<em>Add URL</em> at the bottom of the screen.</span></div>
+<div class="app"><b>Pocket Casts</b><span>Profile \u2192 the gear icon
+\u2192 <em>Add Podcast by URL</em>. Also under Discover on some versions.</span></div>
+<div class="app"><b>Podcast Addict / AntennaPod</b><span>The <em>+</em> button
+\u2192 <em>Add podcast by RSS / URL</em>.</span></div>
+</div>
+
+<div class="note"><strong>The feed is not password protected.</strong> Podcast
+apps cannot decrypt the payload this website uses, so anyone given the feed
+address can subscribe without the password. The episode addresses are not
+guessable, but please share this address only with reviewers.</div>
+
+<h2>Or listen here</h2>
+<p>The <a href="index.html">Listen</a> page follows the text as it plays, lets
+you jump to any paragraph, and gives you a link to any moment for reporting a
+problem. That is the better tool for review; the feed is the better tool for
+simply listening.</p>
+</div>
+__GATE__
+<script>
+gateStart(function(){
+ document.getElementById('copy').onclick=function(){
+  var u=document.getElementById('feedurl').textContent.trim();
+  var done=function(){var c=document.getElementById('copy');
+   c.classList.add('done');document.getElementById('cl').textContent='Copied';
+   setTimeout(function(){c.classList.remove('done');
+    document.getElementById('cl').textContent='Copy'},1900)};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+   navigator.clipboard.writeText(u).then(done,function(){
+    var r=document.createRange();r.selectNodeContents(document.getElementById('feedurl'));
+    var sel=getSelection();sel.removeAllRanges();sel.addRange(r)})}
+  else{var r=document.createRange();r.selectNodeContents(document.getElementById('feedurl'));
+   var sel=getSelection();sel.removeAllRanges();sel.addRange(r)}
+ };
+});
+</script></body></html>"""
+
+
 def icons_into(text, ic):
     """Replace __I_name__ markers with inlined Lucide SVG."""
     for name, svg in ic.items():
@@ -419,6 +504,7 @@ def build(m4b_url, base=""):
               separators=(",", ":"))
     print(f"  {OUT}/data.json  ({os.path.getsize(OUT+'/data.json')/1e6:.1f} MB)")
 
+    feed_url = (base.rstrip("/") + "/feed.xml") if base else "feed.xml"
     gate = icons_into(GATE, ic)
     def page(tpl, active, **kw):
         out = tpl.replace("__NAV__", nav(active)).replace("__GATE__", gate)
@@ -446,14 +532,15 @@ def build(m4b_url, base=""):
     if m4b_url:
         dl = ('<h2>Download</h2><p><a href="%s">Download all tracks</a></p>'
               % html.escape(m4b_url))
-    write("about.html", page(ABOUT, 2,
+    write("about.html", page(ABOUT, 3,
           __LUFS__=lufs, __PEAK__=peak,
           __DUR__=f"{int(total//3600)} h {int(total%3600//60)} m",
           __NTR__=str(len(tracks)), __NCH__=str(len(chapters)),
-          __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl,
-          __FEED__=(base.rstrip("/") + "/feed.xml") if base else "feed.xml"))
+          __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl))
 
     write("text.html", page(TEXT, 1))
+    write("subscribe.html", page(SUBSCRIBE, 2, __FEED__=feed_url,
+          __NTR__=str(len(tracks))))
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, "src")
