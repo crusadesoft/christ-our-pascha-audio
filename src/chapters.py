@@ -14,20 +14,20 @@ def _lvl(b):
 
 def build(blocks):
     chapters, cur = [], None
-    def start(title):
+    def start(title, level=0):
         nonlocal cur
-        cur = dict(title=title, blocks=[])
+        cur = dict(title=title, level=level, blocks=[])
         chapters.append(cur)
 
     start("Front Matter")
     for b in blocks:
         t = b["text"]
         if b["kind"] == "PART":
-            start(t)
+            start(t, 0)
         elif b["kind"] == "HEADING" and (_lvl(b) in (1, 2, 3, 5)
                                          or t.lower() == "introduction"):
             # chapter list shows the printed label; narration omits it
-            start(re.sub(r"\s+", " ", b.get("title") or t))
+            start(re.sub(r"\s+", " ", b.get("title") or t), _lvl(b))
         elif cur is None:
             start("Front Matter")
         cur["blocks"].append(b)

@@ -18,7 +18,8 @@ def build():
     t = 0.0
     cues, chapter_marks = [], []
     for c in chs:
-        chapter_marks.append(dict(index=c["index"], title=c["title"], start=t))
+        chapter_marks.append(dict(index=c["index"], title=c["title"],
+                                  level=c.get("level", 0), start=t))
         for b in c["blocks"]:
             dur = sf.info(b["path"]).duration
             gap = PAUSE.get(b["kind"], PAUSE["para"])

@@ -90,7 +90,7 @@ def main(src, outdir, bitrate, levels, min_min, max_min):
         if i % 20 == 0 or i == len(tracks):
             print(f"  [{i}/{len(tracks)}] {sum(x['bytes'] for x in man)/1e6:.0f} MB",
                   flush=True)
-    json.dump(man, open("docs/tracks.json", "w"), indent=1, ensure_ascii=False)
+    json.dump(man, open("work/tracks.json", "w"), indent=1, ensure_ascii=False)
     mb = sum(x["bytes"] for x in man) / 1e6
     print(f"\n{len(man)} tracks, {mb:.0f} MB, largest {max(x['bytes'] for x in man)/1e6:.1f} MB")
     print(f"total audio {total/3600:.2f} h")

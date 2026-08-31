@@ -1,113 +1,40 @@
 <!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0d10">
+<meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha — Listen</title>
-<link rel="stylesheet" href="style.css">
-<style>
-body{height:100dvh;overflow:hidden;display:grid;
- grid-template-rows:auto 1fr auto;grid-template-columns:310px 1fr;
- grid-template-areas:"nav nav" "side main" "player player"}
-.nav{grid-area:nav}
-#scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8}
-#side{grid-area:side;border-right:1px solid #232830;display:flex;flex-direction:column;
- background:#101216;z-index:9;min-height:0}
-#side h1{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#7d8794;
- margin:0;padding:13px 16px;border-bottom:1px solid #232830;display:flex;
- justify-content:space-between;align-items:center}
-#closeCh{display:none;background:none;border:0;color:#98a2af;font-size:22px}
-#chaps{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
-.ch{padding:11px 16px;cursor:pointer;font-size:14px;color:#98a2af;
- border-left:3px solid transparent;min-height:44px;display:flex;align-items:center}
-.ch:active{background:#1b2029}
-.ch.on{background:#1b2029;color:#8ab4f8;border-left-color:#8ab4f8}
-#main{grid-area:main;display:flex;flex-direction:column;min-width:0;min-height:0}
-#bar{padding:8px 14px;border-bottom:1px solid #232830;background:#101216;
- display:flex;gap:8px;align-items:center}
-#burger{display:none;background:#1b1f26;border:1px solid #2d323b;color:#dfe3e8;
- border-radius:8px;font-size:17px;width:42px;height:38px;flex:none}
-#q{flex:1;min-width:100px;background:#1b1f26;border:1px solid #2d323b;color:#dfe3e8;
- padding:9px 11px;border-radius:8px;font-size:16px}
-#link{background:#1b1f26;border:1px solid #2d323b;color:#dfe3e8;border-radius:8px;
- padding:9px 11px;font-size:12px;cursor:pointer;flex:none}
-#txt{overflow-y:auto;flex:1;padding:18px 22px}
-.p{margin:0 0 3px;padding:9px 11px;border-radius:7px;cursor:pointer;border-left:3px solid transparent}
-.p:active{background:#1b1f26}
-.p.on{background:#243044;border-left-color:#8ab4f8;color:#fff}
-.p.H{color:#e8c07d;font-weight:600;margin-top:22px;font-size:17px}
-.p.P{color:#7fd1b9;font-weight:700;font-size:19px;margin-top:28px}
-.p.Q{color:#b8c0cc;font-style:italic;padding-left:22px;border-left:3px solid #333a45}
-.num{color:#5a6472;font-size:12px;margin-right:8px;font-variant-numeric:tabular-nums}
-.hit{background:#4a3f1a}
-#player{grid-area:player;position:relative;background:#0b0d10;border-top:1px solid #232830;
- display:grid;grid-template-columns:1fr minmax(260px,620px) 1fr;align-items:center;
- gap:12px;padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-#np{min-width:0;display:flex;align-items:center;gap:11px}
-#art{height:50px;width:auto;border-radius:3px;flex:none;background:#1b1f26;
- box-shadow:0 2px 8px rgba(0,0,0,.55)}
-#npText{min-width:0}
-#npTitle{font-size:13px;font-weight:600;color:#e8ecf1;white-space:nowrap;
- overflow:hidden;text-overflow:ellipsis}
-#npSub{font-size:11px;color:#7d8794;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#mid{display:flex;flex-direction:column;gap:5px;min-width:0}
-#ctrls{display:flex;justify-content:center;align-items:center;gap:6px}
-.tb{background:none;border:0;color:#c3cad3;cursor:pointer;border-radius:50%;
- width:38px;height:38px;font-size:13px;display:flex;align-items:center;justify-content:center}
-.tb:hover{color:#fff;background:#1a1f27}
-#play{background:#e8ecf1;color:#0b0d10;width:42px;height:42px;font-size:16px}
-#seekRow{display:flex;align-items:center;gap:9px}
-.tm{font-size:11px;color:#8b95a2;font-variant-numeric:tabular-nums;min-width:56px;flex:none}
-.tm.r{text-align:right}
-#seek{flex:1;-webkit-appearance:none;appearance:none;height:14px;background:none;cursor:pointer}
-#seek::-webkit-slider-runnable-track{height:4px;border-radius:2px;
- background:linear-gradient(#8ab4f8,#8ab4f8) 0/var(--pct,0%) 100% no-repeat,#333a45}
-#seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;
- background:#fff;margin-top:-4px;opacity:0}
-#seek:hover::-webkit-slider-thumb,#seek:active::-webkit-slider-thumb{opacity:1}
-#right{display:flex;justify-content:flex-end;align-items:center;gap:6px}
-#spd{background:#1b1f26;border:1px solid #2d323b;color:#dfe3e8;border-radius:14px;
- padding:5px 11px;font-size:12px;cursor:pointer}
-#toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#243044;
- color:#fff;padding:9px 16px;border-radius:20px;font-size:13px;opacity:0;
- transition:opacity .2s;pointer-events:none;z-index:20}
-#toast.show{opacity:1}
-@media (max-width:820px){
- body{grid-template-columns:1fr;grid-template-areas:"nav" "main" "player"}
- #burger,#closeCh{display:block}
- #side{position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);
-  transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 28px #000}
- body.nav #side{transform:none}
- body.nav #scrim{display:block}
- #txt{padding:14px 15px;font-size:17px;line-height:1.7}
- #player{grid-template-columns:1fr;gap:7px;padding:9px 13px}
- #np{justify-content:center;gap:9px}
- #art{height:40px}
- #right{position:absolute;right:12px;top:8px;z-index:2}
- .tb{width:44px;height:44px}#play{width:50px;height:50px;font-size:18px}
-}
-</style></head><body>
-<div class="nav"><span class="brand">Christ Our Pascha</span>
-<a href="index.html" class="on">Listen</a><a href="text.html">Text</a>
-<a href="about.html">About</a></div>
+<link rel="stylesheet" href="style.css"></head><body class="reader">
+<nav class="nav">
+<span class="brand"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 10v3" /> <path d="M6 6v11" /> <path d="M10 3v18" /> <path d="M14 8v7" /> <path d="M18 5v13" /> <path d="M22 10v3" /> </svg> Christ Our Pascha</span>
+<a href="index.html" class="on"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /> </svg><span>Listen</span></a>
+<a href="text.html"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M12 5v16" /> <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" /> </svg><span>Text</span></a>
+<a href="about.html"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <circle cx="12" cy="12" r="10" /> <path d="M12 16v-4" /> <path d="M12 8h.01" /> </svg><span>About</span></a>
+</nav>
 <div id="scrim"></div>
-<div id="side"><h1>Chapters<button id="closeCh">&times;</button></h1><div id="chaps"></div></div>
+<div id="side">
+ <div id="sideHead">Contents<button id="closeCh"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 6 6 18" /> <path d="m6 6 12 12" /> </svg></button></div>
+ <div id="chaps"></div></div>
 <div id="main">
  <div id="bar">
-   <button id="burger" aria-label="Chapters">&#9776;</button>
-   <input type="search" id="q" placeholder="Search the text...">
-   <button id="link" title="Copy a link to this moment">Copy link</button>
+   <button class="iconbtn" id="burger" aria-label="Contents"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 5h16" /> <path d="M4 12h16" /> <path d="M4 19h16" /> </svg></button>
+   <div class="searchwrap"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="m21 21-4.34-4.34" /> <circle cx="11" cy="11" r="8" /> </svg>
+     <input type="search" id="q" placeholder="Search the text…"></div>
+   <button class="iconbtn" id="link" title="Copy a link to this moment">
+     <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M9 17H7A5 5 0 0 1 7 7h2" /> <path d="M15 7h2a5 5 0 1 1 0 10h-2" /> <line x1="8" x2="16" y1="12" y2="12" /> </svg><span>Copy link</span></button>
  </div>
- <div id="txt"><p style="color:#7d8794">Loading…</p></div>
+ <div id="warn" style="display:none"></div>
+ <div id="txt"><div class="inner"></div></div>
 </div>
 <div id="player">
   <div id="np"><img id="art" src="cover.jpg" alt="">
-    <div id="npText"><div id="npTitle">&nbsp;</div><div id="npSub">Christ Our Pascha</div></div></div>
+    <div id="npText"><div id="npTitle">&nbsp;</div>
+      <div id="npSub">Christ Our Pascha</div></div></div>
   <div id="mid">
     <div id="ctrls">
-      <button class="tb" id="prev" title="Previous chapter">&#9198;</button>
-      <button class="tb" id="b15" title="Back 15 seconds">&#8630;15</button>
-      <button class="tb" id="play" title="Play">&#9654;</button>
-      <button class="tb" id="f15" title="Forward 15 seconds">15&#8631;</button>
-      <button class="tb" id="next" title="Next chapter">&#9197;</button>
+      <button class="tb" id="prev" title="Previous section"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z" /> <path d="M3 20V4" /> </svg></button>
+      <button class="tb skip" id="b15" title="Back 15 seconds"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /> </svg><span class="lbl">15</span></button>
+      <button class="tb" id="play" title="Play"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /> </svg></button>
+      <button class="tb skip" id="f15" title="Forward 15 seconds"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /> <path d="M21 3v5h-5" /> </svg><span class="lbl">15</span></button>
+      <button class="tb" id="next" title="Next section"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M21 4v16" /> <path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z" /> </svg></button>
     </div>
     <div id="seekRow"><span class="tm" id="cur">0:00:00</span>
       <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Seek">
@@ -117,51 +44,93 @@ body{height:100dvh;overflow:hidden;display:grid;
 </div>
 <div id="toast"></div>
 <audio id="a" preload="metadata"></audio>
+<div id="gate"><div class="gatebox">
+ <svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /> </svg>
+ <h1>Christ Our Pascha</h1>
+ <p>An audio edition prepared for review. Not yet public — enter the
+ password you were given.</p>
+ <div class="gaterow">
+  <input type="password" id="pw" placeholder="Password" autocomplete="current-password">
+  <button id="go">Open</button>
+ </div>
+ <div id="gerr"></div>
+</div></div>
 <script>
-const $=i=>document.getElementById(i), A=$('a'), T=$('txt');
+const GK='pascha_pw';
+async function unlock(pw){
+ const buf=await (await fetch('data.enc',{cache:'no-store'})).arrayBuffer();
+ const b=new Uint8Array(buf);
+ if(String.fromCharCode.apply(null,b.slice(0,5))!=='PSCH1')throw new Error('payload');
+ const salt=b.slice(5,21), iv=b.slice(21,33), ct=b.slice(33);
+ const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),
+   'PBKDF2',false,['deriveKey']);
+ const key=await crypto.subtle.deriveKey(
+   {name:'PBKDF2',salt:salt,iterations:200000,hash:'SHA-256'},km,
+   {name:'AES-GCM',length:256},false,['decrypt']);
+ const packed=await crypto.subtle.decrypt({name:'AES-GCM',iv:iv},key,ct);
+ const txt=await new Response(new Blob([packed]).stream()
+   .pipeThrough(new DecompressionStream('gzip'))).text();
+ return JSON.parse(txt);
+}
+function gateStart(onData){
+ const g=document.getElementById('gate'), err=document.getElementById('gerr');
+ const tryPw=async(pw,quiet)=>{
+  try{ err.textContent=quiet?'':'Checking…';
+       const d=await unlock(pw);
+       sessionStorage.setItem(GK,pw); g.remove(); onData(d); return true }
+  catch(e){ if(!quiet)err.textContent='That password did not work.';
+            sessionStorage.removeItem(GK); return false }
+ };
+ const saved=sessionStorage.getItem(GK);
+ if(saved) tryPw(saved,true).then(ok=>{ if(!ok) document.getElementById('pw').focus() });
+ else setTimeout(()=>document.getElementById('pw').focus(),80);
+ document.getElementById('go').onclick=()=>tryPw(document.getElementById('pw').value,false);
+ document.getElementById('pw').addEventListener('keydown',e=>{
+   if(e.key==='Enter')tryPw(e.target.value,false)});
+}
+</script>
+<script>
+const $=i=>document.getElementById(i), A=$('a'), T=$('txt'), INNER=T.firstElementChild;
 let D=null, cur=-1, els=[], trk=-1, seeking=false, TOTAL=0;
 const fmt=s=>{s=Math.max(0,s|0);return (s/3600|0)+':'+String(s%3600/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const esc=s=>s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');
- clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1600)}
-
-fetch('data.json').then(r=>r.json()).then(d=>{D=d;init()})
- .catch(()=>{T.innerHTML='<p style="color:#e88">Could not load data.json.</p>'});
-
+ clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1700)}
+gateStart(d=>{D=d;init()});
 function init(){
- TOTAL=D.tr.reduce((a,t)=>a+t.d,0);
- $('tot').textContent=fmt(TOTAL);
- T.innerHTML=''; let lastPara=null;
+ TOTAL=D.tr.reduce((a,t)=>a+t.d,0); $('tot').textContent=fmt(TOTAL);
+ let lastPara=null;
  D.c.forEach((c,i)=>{const d=document.createElement('div');
   d.className='p '+c[3];
   const showNum=c[2]&&c[2]!==lastPara; if(c[2])lastPara=c[2];
-  let tx=esc(c[4]); if(showNum)tx=tx.replace(new RegExp('^'+c[2]+'\\.\\s*'),'');
+  let tx=esc(c[4]); if(showNum)tx=tx.replace(new RegExp('^'+c[2]+'\.\s*'),'');
   d.innerHTML=(showNum?'<span class="num">'+c[2]+'</span>':'')+tx;
-  d.onclick=()=>seekGlobal(c[0],true); T.appendChild(d); els.push(d)});
+  d.onclick=()=>seekGlobal(c[0],true); INNER.appendChild(d); els.push(d)});
  const CH=$('chaps');
- D.ch.forEach(c=>{const d=document.createElement('div');d.className='ch';d.dataset.c=c.i;
-  d.textContent=c.t; d.onclick=()=>{seekGlobal(c.s,true);document.body.classList.remove('nav')};
+ D.ch.forEach(c=>{const d=document.createElement('div');
+  d.className='ch l'+(c.l||0); d.dataset.c=c.i; d.textContent=c.t;
+  d.onclick=()=>{seekGlobal(c.s,true);document.body.classList.remove('nav')};
   CH.appendChild(d)});
  applyHash() || loadTrack(0,0,false);
 }
 function trackAt(t){let f=D.tr[0];for(const x of D.tr){if(x.s<=t)f=x;else break}return f}
 function chapterAt(t){let f=D.ch[0];for(const c of D.ch){if(c.s<=t)f=c;else break}return f}
 function loadTrack(i,off,play){
- if(i!==trk){trk=i;A.src='audio/'+D.tr[i].f;}
- const go=()=>{A.currentTime=Math.max(0,off); if(play)A.play()};
+ if(i!==trk){trk=i;A.src='audio/'+D.tr[i].f}
+ const go=()=>{A.currentTime=Math.max(0,off);if(play)A.play()};
  if(A.readyState>=1)go(); else A.addEventListener('loadedmetadata',go,{once:true});
 }
-function seekGlobal(t,play){const x=trackAt(t);
- loadTrack(D.tr.indexOf(x), t-x.s, play!==false)}
+function seekGlobal(t,play){const x=trackAt(t);loadTrack(D.tr.indexOf(x),t-x.s,play!==false)}
 function globalTime(){return trk<0?0:D.tr[trk].s+(A.currentTime||0)}
 A.addEventListener('ended',()=>{if(trk<D.tr.length-1)loadTrack(trk+1,0,true)});
+const IPLAY="<svg class=\"ic\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\" /> </svg>", IPAUSE="<svg class=\"ic\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" > <rect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\" /> <rect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\" /> </svg>";
 $('play').onclick=()=>A.paused?A.play():A.pause();
-A.addEventListener('play',()=>$('play').innerHTML='&#10073;&#10073;');
-A.addEventListener('pause',()=>$('play').innerHTML='&#9654;');
+A.addEventListener('play',()=>$('play').innerHTML=IPAUSE);
+A.addEventListener('pause',()=>$('play').innerHTML=IPLAY);
 const jump=d=>seekGlobal(Math.max(0,Math.min(TOTAL-1,globalTime()+d)),!A.paused);
 $('b15').onclick=()=>jump(-15); $('f15').onclick=()=>jump(15);
-$('prev').onclick=()=>{const t=globalTime(),c=chapterAt(t);
- const i=D.ch.indexOf(c); seekGlobal((t-c.s>3||i===0)?c.s:D.ch[i-1].s,!A.paused)};
+$('prev').onclick=()=>{const t=globalTime(),c=chapterAt(t),i=D.ch.indexOf(c);
+ seekGlobal((t-c.s>3||i===0)?c.s:D.ch[i-1].s,!A.paused)};
 $('next').onclick=()=>{const i=D.ch.indexOf(chapterAt(globalTime()));
  if(i<D.ch.length-1)seekGlobal(D.ch[i+1].s,!A.paused)};
 const RS=[1,1.1,1.25,1.5,1.75,2,.85];let ri=0;
@@ -169,10 +138,11 @@ $('spd').onclick=()=>{ri=(ri+1)%RS.length;A.playbackRate=RS[ri];$('spd').innerHT
 $('seek').addEventListener('input',e=>{seeking=true;
  $('cur').textContent=fmt(e.target.value/1000*TOTAL);
  e.target.style.setProperty('--pct',(e.target.value/10)+'%')});
-$('seek').addEventListener('change',e=>{seeking=false;seekGlobal(e.target.value/1000*TOTAL,!A.paused)});
+$('seek').addEventListener('change',e=>{seeking=false;
+ seekGlobal(e.target.value/1000*TOTAL,!A.paused)});
 let hashT=0;
 function sync(){
- const t=globalTime();
+ if(!D)return; const t=globalTime();
  if(!seeking){const v=t/TOTAL*1000;$('seek').value=v;$('seek').style.setProperty('--pct',(v/10)+'%')}
  $('cur').textContent=fmt(t);
  let lo=0,hi=D.c.length-1,f=-1;
@@ -186,34 +156,30 @@ function sync(){
   [...$('chaps').children].forEach(e=>e.classList.toggle('on',+e.dataset.c===ci));
   const ch=D.ch.find(x=>x.i===ci);
   $('npTitle').textContent=ch?ch.t:'';
-  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  \u00b7  paragraph '+D.c[f][2]:'');}
- if(!A.paused && Date.now()-hashT>3000){hashT=Date.now();
+  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  ·  paragraph '+D.c[f][2]:'')}
+ if(!A.paused&&Date.now()-hashT>3000){hashT=Date.now();
   history.replaceState(null,'','#t='+Math.round(t))}
 }
 A.addEventListener('timeupdate',sync);
-// a seek while paused fires no timeupdate, so a deep link would land in the
-// right place but leave the previous paragraph highlighted
 A.addEventListener('seeked',sync);
 A.addEventListener('loadeddata',sync);
 $('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();let n=0;
  els.forEach((el,i)=>{const hit=v&&D.c[i][4].toLowerCase().includes(v);
   el.classList.toggle('hit',!!hit);if(hit)n++});
- if(v){const k=els.findIndex(el=>el.classList.contains('hit'));if(k>=0)els[k].scrollIntoView({block:'center'})}
+ if(v){const k=els.findIndex(el=>el.classList.contains('hit'));
+  if(k>=0)els[k].scrollIntoView({block:'center'})}
  $('npSub').textContent=v?n+' matches':'Christ Our Pascha'});
 $('link').onclick=()=>{const u=location.origin+location.pathname+'#t='+Math.round(globalTime());
- navigator.clipboard.writeText(u).then(()=>toast('Link copied — opens at this moment'),
-  ()=>toast(u))};
+ navigator.clipboard.writeText(u).then(()=>toast('Link copied — opens here'),()=>toast(u))};
 function applyHash(){const h=location.hash;
  let m=h.match(/[#&]t=(\d+(?:\.\d+)?)/); if(m){seekGlobal(parseFloat(m[1]),false);return true}
  m=h.match(/[#&]p=(\d+)/);
- // nudge past the boundary: seeking to a cue's exact start can snap to an
- // earlier audio frame, leaving the PREVIOUS paragraph current
- if(m){const p=+m[1];const c=D.c.find(x=>x[2]===p); if(c){seekGlobal(c[0]+0.25,false);return true}}
+ if(m){const p=+m[1],c=D.c.find(x=>x[2]===p); if(c){seekGlobal(c[0]+0.25,false);return true}}
  return false}
 addEventListener('hashchange',applyHash);
-const nav=on=>document.body.classList.toggle('nav',on);
-$('burger').onclick=()=>nav(!document.body.classList.contains('nav'));
-$('closeCh').onclick=()=>nav(false); $('scrim').onclick=()=>nav(false);
+const navT=on=>document.body.classList.toggle('nav',on);
+$('burger').onclick=()=>navT(!document.body.classList.contains('nav'));
+$('closeCh').onclick=()=>navT(false); $('scrim').onclick=()=>navT(false);
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
  if(e.code==='Space'){e.preventDefault();A.paused?A.play():A.pause()}
  if(e.key==='ArrowLeft')jump(-15);if(e.key==='ArrowRight')jump(15)});
@@ -221,5 +187,5 @@ if('mediaSession' in navigator){
  navigator.mediaSession.setActionHandler('seekbackward',()=>jump(-15));
  navigator.mediaSession.setActionHandler('seekforward',()=>jump(15));
  navigator.mediaSession.setActionHandler('previoustrack',()=>$('prev').click());
- navigator.mediaSession.setActionHandler('nexttrack',()=>$('next').click());}
+ navigator.mediaSession.setActionHandler('nexttrack',()=>$('next').click())}
 </script></body></html>

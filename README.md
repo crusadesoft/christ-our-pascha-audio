@@ -139,3 +139,43 @@ LFS objects. If the repo needs to stay small, host `audio/` elsewhere and
 point `data.json`/`feed.xml` at it.
 
 Pages bandwidth is a 100 GB/month soft limit — roughly 250 complete listens.
+
+## Icons
+
+Lucide, inlined at build time from the `lucide-static` npm package so the site
+makes no external requests:
+
+```bash
+cd vendor && npm install lucide-static
+```
+
+`src/icons.py` pulls the 19 used icons and rewrites their `class` to `ic`.
+Note the package ships `class="lucide lucide-NAME"` already — inserting a
+second `class` attribute silently does nothing, because browsers keep only
+the first.
+
+## Password gate
+
+GitHub Pages is static, so there is no server to check a password. Rather than
+hiding the UI behind a JavaScript `if` — which anyone can step past — the
+payload itself is encrypted:
+
+- `data.json` (transcript, tracks, timings) → **AES-256-GCM**, key derived by
+  **PBKDF2-SHA256, 200,000 iterations** over the password → `docs/data.enc`
+- audio files are renamed to unguessable hex; the names exist **only inside
+  the encrypted payload**
+- `work/tracks.json` holds the manifest and is never published
+
+```bash
+.venv/bin/python src/gate.py --password "the-password"
+```
+
+The mapping in `work/audio_names.json` keeps filenames stable across rebuilds
+so existing links keep working.
+
+**What this is and isn't.** It stops a passer-by: without the password there is
+no transcript and no way to discover the audio URLs. It is *not* a security
+boundary — anyone with the password can share the decrypted contents or the
+file URLs, and those URLs stay valid afterwards. Rotate the password by
+re-running `gate.py`; delete `work/audio_names.json` first if the old URLs
+should stop working.
