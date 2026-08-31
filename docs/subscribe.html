@@ -2,6 +2,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha — Subscribe</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christ Our Pascha">
 <link rel="stylesheet" href="style.css">
 <style>
 .urlbox{display:flex;gap:9px;align-items:stretch;margin:18px 0 8px}
@@ -77,6 +82,31 @@ apps cannot decrypt the payload this website uses, so anyone given the feed
 address can subscribe without the password. The episode addresses are not
 guessable, but please share this address only with reviewers.</div>
 
+<h2>Install it as an app</h2>
+<p>This site can be installed on a phone, tablet or desktop, so it opens from
+the home screen like an app, keeps your place, and shows the section on the
+lock screen.</p>
+<div class="apps">
+<div class="app"><b>iPhone / iPad</b><span>Open in Safari, tap the Share
+button, then <em>Add to Home Screen</em>.</span></div>
+<div class="app"><b>Android</b><span>Open in Chrome, tap the ⋮ menu, then
+<em>Install app</em> or <em>Add to Home screen</em>.</span></div>
+<div class="app"><b>Desktop</b><span>In Chrome or Edge, click the install icon
+at the right of the address bar.</span></div>
+</div>
+<p id="installWrap" hidden style="margin-top:14px">
+ <button id="install" class="btn-primary">Install now</button></p>
+
+<h2>Listen offline</h2>
+<p>Sections you play are kept on the device automatically. You can also
+download everything at once — about <strong>351 MB</strong> across
+78 parts.</p>
+<div class="urlbox" style="align-items:center">
+ <button id="dl" class="btn-primary">Download all for offline</button>
+ <button id="dlClear" class="btn-quiet">Clear downloads</button>
+</div>
+<div id="dlStat" style="font-size:13.5px;color:var(--muted);margin-top:6px">&nbsp;</div>
+
 <h2>Or listen here</h2>
 <p>The <a href="index.html">Listen</a> page follows the text as it plays, lets
 you jump to any paragraph, and gives you a link to any moment for reporting a
@@ -116,11 +146,11 @@ function gateStart(onData){
  const tryPw=async(pw,quiet)=>{
   try{ err.textContent=quiet?'':'Checking…';
        const d=await unlock(pw);
-       sessionStorage.setItem(GK,pw); g.remove(); onData(d); return true }
+       localStorage.setItem(GK,pw); g.remove(); onData(d); return true }
   catch(e){ if(!quiet)err.textContent='That password did not work.';
-            sessionStorage.removeItem(GK); return false }
+            localStorage.removeItem(GK); return false }
  };
- const saved=sessionStorage.getItem(GK);
+ const saved=localStorage.getItem(GK);
  if(saved) tryPw(saved,true).then(ok=>{ if(!ok) document.getElementById('pw').focus() });
  else setTimeout(()=>document.getElementById('pw').focus(),80);
  document.getElementById('go').onclick=()=>tryPw(document.getElementById('pw').value,false);
@@ -129,7 +159,30 @@ function gateStart(onData){
 }
 </script>
 <script>
-gateStart(function(){
+let SWREG=null, DLURLS=[];
+gateStart(function(d){
+ DLURLS=(d.tr||[]).map(function(t){return 'audio/'+t.f});
+ var stat=document.getElementById('dlStat');
+ function say(m){stat.textContent=m}
+ if('serviceWorker' in navigator){
+  navigator.serviceWorker.ready.then(function(reg){
+   SWREG=reg;
+   navigator.serviceWorker.addEventListener('message',function(e){
+    var m=e.data||{};
+    if(m.type==='cache-progress')say('Downloading — '+m.done+' of '+m.total+' parts…');
+    if(m.type==='cache-done')say('All '+m.total+' parts available offline.');
+    if(m.type==='cache-status')say(m.count?m.count+' of '+DLURLS.length+' parts stored offline.'
+                                          :'Nothing stored offline yet.')});
+   if(navigator.serviceWorker.controller)
+    navigator.serviceWorker.controller.postMessage({type:'cache-status'})});
+ } else say('Offline storage is not available in this browser.');
+ document.getElementById('dl').onclick=function(){
+  if(!navigator.serviceWorker.controller)return say('Reload the page once, then try again.');
+  say('Starting…');
+  navigator.serviceWorker.controller.postMessage({type:'cache-audio',urls:DLURLS})};
+ document.getElementById('dlClear').onclick=function(){
+  if(navigator.serviceWorker.controller)
+   navigator.serviceWorker.controller.postMessage({type:'cache-clear'})};
  document.getElementById('copy').onclick=function(){
   var u=document.getElementById('feedurl').textContent.trim();
   var done=function(){var c=document.getElementById('copy');
@@ -144,4 +197,8 @@ gateStart(function(){
    var sel=getSelection();sel.removeAllRanges();sel.addRange(r)}
  };
 });
-</script></body></html>
+</script><script>
+if('serviceWorker' in navigator)
+ addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body></html>

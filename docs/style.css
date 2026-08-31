@@ -232,3 +232,10 @@ body.reader{height:100dvh;overflow:hidden;display:grid;
  color:var(--dim);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;
  width:calc(100% - 20px);transition:color .14s,border-color .14s}
 #histClear:hover{color:#ff9b9b;border-color:#5a3030}
+.btn-primary{background:var(--accent);color:#0b0f17;border:0;border-radius:var(--radius);
+ padding:12px 20px;font-size:14px;font-weight:620;cursor:pointer;transition:filter .14s}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-quiet{background:none;border:1px solid var(--border);color:var(--muted);
+ border-radius:var(--radius);padding:12px 16px;font-size:13.5px;cursor:pointer;
+ transition:color .14s,border-color .14s}
+.btn-quiet:hover{color:var(--text);border-color:#2c3340}

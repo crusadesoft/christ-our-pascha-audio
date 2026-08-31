@@ -1,0 +1,17 @@
+{
+  "name": "Christ Our Pascha — Catechism of the Ukrainian Catholic Church",
+  "short_name": "Christ Our Pascha",
+  "description": "Audio edition of the UGCC catechism, prepared for review. Synthetic narration.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d0f13",
+  "theme_color": "#13161c",
+  "categories": ["books", "education"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

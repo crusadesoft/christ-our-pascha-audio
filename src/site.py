@@ -73,11 +73,11 @@ function gateStart(onData){
  const tryPw=async(pw,quiet)=>{
   try{ err.textContent=quiet?'':'Checking\u2026';
        const d=await unlock(pw);
-       sessionStorage.setItem(GK,pw); g.remove(); onData(d); return true }
+       localStorage.setItem(GK,pw); g.remove(); onData(d); return true }
   catch(e){ if(!quiet)err.textContent='That password did not work.';
-            sessionStorage.removeItem(GK); return false }
+            localStorage.removeItem(GK); return false }
  };
- const saved=sessionStorage.getItem(GK);
+ const saved=localStorage.getItem(GK);
  if(saved) tryPw(saved,true).then(ok=>{ if(!ok) document.getElementById('pw').focus() });
  else setTimeout(()=>document.getElementById('pw').focus(),80);
  document.getElementById('go').onclick=()=>tryPw(document.getElementById('pw').value,false);
@@ -91,6 +91,11 @@ READER = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha \u2014 Listen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christ Our Pascha">
 <link rel="stylesheet" href="style.css"></head><body class="reader">
 __NAV__
 <div id="scrim"></div>
@@ -213,11 +218,24 @@ function sync(){
   [...$('chaps').children].forEach(e=>e.classList.toggle('on',+e.dataset.c===ci));
   const ch=D.ch.find(x=>x.i===ci);
   $('npTitle').textContent=ch?ch.t:'';
-  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  \u00b7  paragraph '+D.c[f][2]:'')}
+  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  \u00b7  paragraph '+D.c[f][2]:'');
+  // lock screen / car display / headphone controls
+  if('mediaSession' in navigator && ch){
+   navigator.mediaSession.metadata=new MediaMetadata({
+    title:ch.t, artist:'Christ Our Pascha',
+    album:'Catechism of the Ukrainian Catholic Church',
+    artwork:[{src:'icons/icon-192.png',sizes:'192x192',type:'image/png'},
+             {src:'icons/icon-512.png',sizes:'512x512',type:'image/png'}]})}}
  if(!A.paused&&Date.now()-hashT>3000){hashT=Date.now();
   history.replaceState(null,'','#t='+Math.round(t))}
 }
 A.addEventListener('timeupdate',sync);
+A.addEventListener('timeupdate',function(){
+ // the OS sees one track at a time; report our global position instead
+ if('mediaSession' in navigator && navigator.mediaSession.setPositionState && TOTAL){
+  try{navigator.mediaSession.setPositionState(
+   {duration:TOTAL,playbackRate:A.playbackRate,position:Math.min(globalTime(),TOTAL)})}catch(e){}}
+});
 A.addEventListener('seeked',sync);
 A.addEventListener('loadeddata',sync);
 $('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();let n=0;
@@ -310,13 +328,22 @@ if('mediaSession' in navigator){
  navigator.mediaSession.setActionHandler('seekforward',()=>jump(15));
  navigator.mediaSession.setActionHandler('previoustrack',()=>$('prev').click());
  navigator.mediaSession.setActionHandler('nexttrack',()=>$('next').click())}
-</script></body></html>"""
+</script><script>
+if('serviceWorker' in navigator)
+ addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body></html>"""
 
 
 ABOUT = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha \u2014 About this recording</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christ Our Pascha">
 <link rel="stylesheet" href="style.css"></head><body>
 __NAV__
 <div class="wrap">
@@ -411,12 +438,21 @@ likely defect, and the reason for this review.</div>
 at any moment to get a URL that opens at that exact point. That is the most
 useful way to report a mispronunciation or a passage that reads wrongly.</p>
 __DOWNLOAD__
-</div></body></html>"""
+</div><script>
+if('serviceWorker' in navigator)
+ addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body></html>"""
 
 SUBSCRIBE = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha \u2014 Subscribe</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christ Our Pascha">
 <link rel="stylesheet" href="style.css">
 <style>
 .urlbox{display:flex;gap:9px;align-items:stretch;margin:18px 0 8px}
@@ -487,6 +523,31 @@ apps cannot decrypt the payload this website uses, so anyone given the feed
 address can subscribe without the password. The episode addresses are not
 guessable, but please share this address only with reviewers.</div>
 
+<h2>Install it as an app</h2>
+<p>This site can be installed on a phone, tablet or desktop, so it opens from
+the home screen like an app, keeps your place, and shows the section on the
+lock screen.</p>
+<div class="apps">
+<div class="app"><b>iPhone / iPad</b><span>Open in Safari, tap the Share
+button, then <em>Add to Home Screen</em>.</span></div>
+<div class="app"><b>Android</b><span>Open in Chrome, tap the \u22ee menu, then
+<em>Install app</em> or <em>Add to Home screen</em>.</span></div>
+<div class="app"><b>Desktop</b><span>In Chrome or Edge, click the install icon
+at the right of the address bar.</span></div>
+</div>
+<p id="installWrap" hidden style="margin-top:14px">
+ <button id="install" class="btn-primary">Install now</button></p>
+
+<h2>Listen offline</h2>
+<p>Sections you play are kept on the device automatically. You can also
+download everything at once \u2014 about <strong>__SIZEMB__ MB</strong> across
+__NTR__ parts.</p>
+<div class="urlbox" style="align-items:center">
+ <button id="dl" class="btn-primary">Download all for offline</button>
+ <button id="dlClear" class="btn-quiet">Clear downloads</button>
+</div>
+<div id="dlStat" style="font-size:13.5px;color:var(--muted);margin-top:6px">&nbsp;</div>
+
 <h2>Or listen here</h2>
 <p>The <a href="index.html">Listen</a> page follows the text as it plays, lets
 you jump to any paragraph, and gives you a link to any moment for reporting a
@@ -495,7 +556,30 @@ simply listening.</p>
 </div>
 __GATE__
 <script>
-gateStart(function(){
+let SWREG=null, DLURLS=[];
+gateStart(function(d){
+ DLURLS=(d.tr||[]).map(function(t){return 'audio/'+t.f});
+ var stat=document.getElementById('dlStat');
+ function say(m){stat.textContent=m}
+ if('serviceWorker' in navigator){
+  navigator.serviceWorker.ready.then(function(reg){
+   SWREG=reg;
+   navigator.serviceWorker.addEventListener('message',function(e){
+    var m=e.data||{};
+    if(m.type==='cache-progress')say('Downloading \u2014 '+m.done+' of '+m.total+' parts\u2026');
+    if(m.type==='cache-done')say('All '+m.total+' parts available offline.');
+    if(m.type==='cache-status')say(m.count?m.count+' of '+DLURLS.length+' parts stored offline.'
+                                          :'Nothing stored offline yet.')});
+   if(navigator.serviceWorker.controller)
+    navigator.serviceWorker.controller.postMessage({type:'cache-status'})});
+ } else say('Offline storage is not available in this browser.');
+ document.getElementById('dl').onclick=function(){
+  if(!navigator.serviceWorker.controller)return say('Reload the page once, then try again.');
+  say('Starting\u2026');
+  navigator.serviceWorker.controller.postMessage({type:'cache-audio',urls:DLURLS})};
+ document.getElementById('dlClear').onclick=function(){
+  if(navigator.serviceWorker.controller)
+   navigator.serviceWorker.controller.postMessage({type:'cache-clear'})};
  document.getElementById('copy').onclick=function(){
   var u=document.getElementById('feedurl').textContent.trim();
   var done=function(){var c=document.getElementById('copy');
@@ -510,7 +594,11 @@ gateStart(function(){
    var sel=getSelection();sel.removeAllRanges();sel.addRange(r)}
  };
 });
-</script></body></html>"""
+</script><script>
+if('serviceWorker' in navigator)
+ addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body></html>"""
 
 
 def icons_into(text, ic):
@@ -564,8 +652,21 @@ def build(m4b_url, base=""):
           __NTR__=str(len(tracks)), __NCH__=str(len(chapters)),
           __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl))
 
+    mb = round(sum(t.get("b", 0) for t in tracks) / 1e6) or round(
+        sum(os.path.getsize(f"{OUT}/audio/{t['f']}") for t in tracks) / 1e6)
     write("subscribe.html", page(SUBSCRIBE, 1, __FEED__=feed_url,
-          __NTR__=str(len(tracks))))
+          __NTR__=str(len(tracks)), __SIZEMB__=str(mb)))
+
+    # version the service worker from the built shell so redeploys invalidate
+    import hashlib
+    stamp = hashlib.sha1(
+        b"".join(pathlib.Path(f"{OUT}/{f}").read_bytes()
+                 for f in ("index.html", "style.css", "about.html",
+                           "subscribe.html"))).hexdigest()[:10]
+    sw = pathlib.Path(f"{OUT}/sw.js").read_text()
+    sw = re.sub(r"pascha-v[\w]*", f"pascha-v{stamp}", sw, count=1)
+    pathlib.Path(f"{OUT}/sw.js").write_text(sw)
+    print(f"  {OUT}/sw.js  (cache version {stamp})")
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, "src")

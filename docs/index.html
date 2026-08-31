@@ -2,6 +2,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
 <title>Christ Our Pascha — Listen</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Christ Our Pascha">
 <link rel="stylesheet" href="style.css"></head><body class="reader">
 <nav class="nav">
 <span class="brand"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M2 10v3" /> <path d="M6 6v11" /> <path d="M10 3v18" /> <path d="M14 8v7" /> <path d="M18 5v13" /> <path d="M22 10v3" /> </svg> Christ Our Pascha</span>
@@ -88,11 +93,11 @@ function gateStart(onData){
  const tryPw=async(pw,quiet)=>{
   try{ err.textContent=quiet?'':'Checking…';
        const d=await unlock(pw);
-       sessionStorage.setItem(GK,pw); g.remove(); onData(d); return true }
+       localStorage.setItem(GK,pw); g.remove(); onData(d); return true }
   catch(e){ if(!quiet)err.textContent='That password did not work.';
-            sessionStorage.removeItem(GK); return false }
+            localStorage.removeItem(GK); return false }
  };
- const saved=sessionStorage.getItem(GK);
+ const saved=localStorage.getItem(GK);
  if(saved) tryPw(saved,true).then(ok=>{ if(!ok) document.getElementById('pw').focus() });
  else setTimeout(()=>document.getElementById('pw').focus(),80);
  document.getElementById('go').onclick=()=>tryPw(document.getElementById('pw').value,false);
@@ -173,11 +178,24 @@ function sync(){
   [...$('chaps').children].forEach(e=>e.classList.toggle('on',+e.dataset.c===ci));
   const ch=D.ch.find(x=>x.i===ci);
   $('npTitle').textContent=ch?ch.t:'';
-  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  ·  paragraph '+D.c[f][2]:'')}
+  $('npSub').textContent='Christ Our Pascha'+(D.c[f][2]?'  ·  paragraph '+D.c[f][2]:'');
+  // lock screen / car display / headphone controls
+  if('mediaSession' in navigator && ch){
+   navigator.mediaSession.metadata=new MediaMetadata({
+    title:ch.t, artist:'Christ Our Pascha',
+    album:'Catechism of the Ukrainian Catholic Church',
+    artwork:[{src:'icons/icon-192.png',sizes:'192x192',type:'image/png'},
+             {src:'icons/icon-512.png',sizes:'512x512',type:'image/png'}]})}}
  if(!A.paused&&Date.now()-hashT>3000){hashT=Date.now();
   history.replaceState(null,'','#t='+Math.round(t))}
 }
 A.addEventListener('timeupdate',sync);
+A.addEventListener('timeupdate',function(){
+ // the OS sees one track at a time; report our global position instead
+ if('mediaSession' in navigator && navigator.mediaSession.setPositionState && TOTAL){
+  try{navigator.mediaSession.setPositionState(
+   {duration:TOTAL,playbackRate:A.playbackRate,position:Math.min(globalTime(),TOTAL)})}catch(e){}}
+});
 A.addEventListener('seeked',sync);
 A.addEventListener('loadeddata',sync);
 $('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();let n=0;
@@ -270,4 +288,8 @@ if('mediaSession' in navigator){
  navigator.mediaSession.setActionHandler('seekforward',()=>jump(15));
  navigator.mediaSession.setActionHandler('previoustrack',()=>$('prev').click());
  navigator.mediaSession.setActionHandler('nexttrack',()=>$('next').click())}
-</script></body></html>
+</script><script>
+if('serviceWorker' in navigator)
+ addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+</script>
+</body></html>

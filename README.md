@@ -130,6 +130,25 @@ sections under 3 minutes and split those over 25, giving 78 files of
 3.0–21.1 minutes. The reader maps global time to track + offset, so all 232
 marks stay available for navigation and deep links.
 
+### Progressive web app
+
+`manifest.webmanifest` + `sw.js` make the site installable and usable offline.
+
+- **Shell** (pages, CSS, `data.enc`, icons) is precached; network-first so a
+  redeploy is picked up, cache as fallback.
+- **Audio is never precached** — the recording is ~351 MB. Tracks are cached
+  after they play, or all at once from the Subscribe page.
+- Range requests bypass the cache entirely. Caching a `206` would store a
+  fragment that later reads would treat as the whole file.
+- The cache name is stamped with a hash of the built shell, so a redeploy
+  retires the old caches instead of serving them forever.
+- Media Session reports the section title, album and artwork, and
+  `setPositionState` maps our synthetic global timeline onto the OS scrubber
+  (which otherwise only sees one track).
+- The unlock moved from `sessionStorage` to `localStorage`: an installed app
+  relaunches often, and re-entering the password each time is not worth the
+  marginal deterrence.
+
 ### Listen history
 
 The reader keeps a local history in `localStorage` (key `pascha_hist_v1`):
