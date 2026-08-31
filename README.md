@@ -130,6 +130,20 @@ sections under 3 minutes and split those over 25, giving 78 files of
 3.0–21.1 minutes. The reader maps global time to track + offset, so all 232
 marks stay available for navigation and deep links.
 
+### Listen history
+
+The reader keeps a local history in `localStorage` (key `pascha_hist_v1`):
+where you listened, the section title, the paragraph, and when. It is
+per-browser and never leaves the device.
+
+A position is only recorded once you have stayed with it for ~25 seconds, so
+scrubbing past does not fill the list. Repeats within a section update the
+existing entry; returning to a section later creates a new one, which is the
+point — you can find the passage you heard *before* the one you are on.
+
+On load with no `#` target, the reader resumes the last position (paused) and
+says so in a toast.
+
 ### Deep links
 
 `#t=3600` opens at a timestamp; `#p=224` opens at a paragraph. The URL

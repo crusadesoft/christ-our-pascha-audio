@@ -11,8 +11,19 @@
 </nav>
 <div id="scrim"></div>
 <div id="side">
- <div id="sideHead">Contents<button id="closeCh"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 6 6 18" /> <path d="m6 6 12 12" /> </svg></button></div>
- <div id="chaps"></div></div>
+ <div id="sideHead">
+   <div class="tabs">
+     <button class="tab on" data-t="chaps">Contents</button>
+     <button class="tab" data-t="hist">History</button>
+   </div>
+   <button id="closeCh"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M18 6 6 18" /> <path d="m6 6 12 12" /> </svg></button></div>
+ <div id="chaps"></div>
+ <div id="hist" hidden>
+   <div id="histEmpty">Nothing yet. Places you listen to will appear here so
+     you can come back to them.</div>
+   <div id="histList"></div>
+   <button id="histClear" hidden>Clear history</button>
+ </div></div>
 <div id="main">
  <div id="bar">
    <button class="iconbtn" id="burger" aria-label="Contents"><svg class="ic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" > <path d="M4 5h16" /> <path d="M4 12h16" /> <path d="M4 19h16" /> </svg></button>
@@ -111,7 +122,13 @@ function init(){
   d.className='ch l'+(c.l||0); d.dataset.c=c.i; d.textContent=c.t;
   d.onclick=()=>{seekGlobal(c.s,true);document.body.classList.remove('nav')};
   CH.appendChild(d)});
- applyHash() || loadTrack(0,0,false);
+ hRender();
+ if(!applyHash()){
+  const o=hLoad();
+  if(o.last && o.last.t>20){ seekGlobal(o.last.t,false);
+   setTimeout(function(){toast('Resumed at '+fmt(o.last.t)+' — '+o.last.ch)},700) }
+  else loadTrack(0,0,false);
+ }
 }
 function trackAt(t){let f=D.tr[0];for(const x of D.tr){if(x.s<=t)f=x;else break}return f}
 function chapterAt(t){let f=D.ch[0];for(const c of D.ch){if(c.s<=t)f=c;else break}return f}
@@ -177,6 +194,71 @@ function applyHash(){const h=location.hash;
  if(m){const p=+m[1],c=D.c.find(x=>x[2]===p); if(c){seekGlobal(c[0]+0.25,false);return true}}
  return false}
 addEventListener('hashchange',applyHash);
+/* ---- listen history (localStorage) ------------------------------------
+   Records where you actually listened, so you can get back to a passage
+   without remembering its timestamp. Kept per-browser; nothing leaves the
+   device. A position only counts once you have stayed with it a while, so
+   scrubbing past does not fill the list with noise. */
+const HK='pascha_hist_v1', HMAX=40, HMIN_DWELL=25;
+let hState={t0:null,acc:0,lastCh:null};
+function hLoad(){try{return JSON.parse(localStorage.getItem(HK))||{last:null,hist:[]}}
+ catch(e){return {last:null,hist:[]}}}
+function hSave(o){try{localStorage.setItem(HK,JSON.stringify(o))}catch(e){}}
+function agoStr(ms){const s=(Date.now()-ms)/1000;
+ if(s<90)return 'just now';
+ if(s<3600)return Math.round(s/60)+' min ago';
+ if(s<86400)return Math.round(s/3600)+' h ago';
+ const d=Math.round(s/86400); return d===1?'yesterday':d+' days ago'}
+function hRecord(t){
+ const ci=(D.c[cur]||[])[1], ch=D.ch.find(x=>x.i===ci);
+ if(!ch)return;
+ const o=hLoad();
+ o.last={t:Math.round(t),ch:ch.t,para:(D.c[cur]||[])[2]||0,at:Date.now()};
+ const top=o.hist[0];
+ // update the open entry while still in the same section; start a new one
+ // when the section changes
+ if(top && top.ch===ch.t){ top.t=Math.round(t); top.at=Date.now();
+   top.para=(D.c[cur]||[])[2]||top.para }
+ else{ o.hist.unshift({t:Math.round(t),ch:ch.t,para:(D.c[cur]||[])[2]||0,
+       at:Date.now()}); o.hist=o.hist.slice(0,HMAX) }
+ hSave(o); hRender();
+}
+function hRender(){
+ const o=hLoad(), L=document.getElementById('histList');
+ const empty=document.getElementById('histEmpty'), clr=document.getElementById('histClear');
+ L.innerHTML='';
+ empty.hidden=o.hist.length>0; clr.hidden=o.hist.length===0;
+ o.hist.forEach(function(e){
+  const b=document.createElement('button'); b.className='hi';
+  b.innerHTML='<b></b><span class="meta"><span class="tt"></span>'
+   +(e.para?'<span>¶ '+e.para+'</span>':'')+'<span class="ago"></span></span>';
+  b.querySelector('b').textContent=e.ch;
+  b.querySelector('.tt').textContent=fmt(e.t);
+  b.querySelector('.ago').textContent=agoStr(e.at);
+  b.onclick=function(){seekGlobal(e.t,true);document.body.classList.remove('nav')};
+  L.appendChild(b)});
+}
+document.getElementById('histClear').onclick=function(){
+ hSave({last:hLoad().last,hist:[]}); hRender()};
+[].forEach.call(document.querySelectorAll('.tab'),function(t){
+ t.onclick=function(){
+  [].forEach.call(document.querySelectorAll('.tab'),function(x){
+   x.classList.toggle('on',x===t)});
+  document.getElementById('chaps').hidden = t.dataset.t!=='chaps';
+  document.getElementById('hist').hidden  = t.dataset.t!=='hist';
+  if(t.dataset.t==='hist')hRender()}});
+// accumulate dwell time; only commit once you have really been listening here
+A.addEventListener('timeupdate',function(){
+ if(A.paused||cur<0)return;
+ const ci=(D.c[cur]||[])[1];
+ if(ci!==hState.lastCh){ hState.lastCh=ci; hState.acc=0; hState.t0=Date.now();
+   hRecord(globalTime()); return }
+ if(hState.t0===null)hState.t0=Date.now();
+ if(Date.now()-hState.t0>HMIN_DWELL*1000){ hState.t0=Date.now();
+   hRecord(globalTime()) }
+});
+A.addEventListener('pause',function(){if(cur>=0)hRecord(globalTime())});
+addEventListener('pagehide',function(){if(cur>=0)hRecord(globalTime())});
 const navT=on=>document.body.classList.toggle('nav',on);
 $('burger').onclick=()=>navT(!document.body.classList.contains('nav'));
 $('closeCh').onclick=()=>navT(false); $('scrim').onclick=()=>navT(false);

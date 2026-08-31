@@ -209,3 +209,26 @@ body.reader{height:100dvh;overflow:hidden;display:grid;
  h1{font-size:25px}
  th{width:auto}
 }
+
+/* ---------- sidebar tabs + listen history ---------- */
+#sideHead{padding:11px 12px 10px}
+.tabs{display:flex;gap:3px;background:var(--surface-2);padding:3px;border-radius:9px}
+.tab{background:none;border:0;color:var(--dim);font:inherit;font-size:12px;
+ font-weight:600;padding:6px 13px;border-radius:7px;cursor:pointer;
+ letter-spacing:.02em;transition:background .14s,color .14s}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--surface-3);color:var(--text)}
+#hist{overflow-y:auto;flex:1;padding:6px 8px 16px;-webkit-overflow-scrolling:touch}
+#histEmpty{color:var(--dim);font-size:12.5px;line-height:1.6;padding:14px 10px}
+.hi{padding:9px 10px;border-radius:8px;cursor:pointer;transition:background .13s;
+ display:block;width:100%;text-align:left;background:none;border:0;font:inherit}
+.hi:hover{background:var(--surface-2)}
+.hi b{display:block;color:var(--text);font-size:13px;font-weight:580;
+ line-height:1.35;margin-bottom:3px}
+.hi .meta{color:var(--dim);font-size:11.5px;display:flex;gap:8px;
+ font-variant-numeric:tabular-nums}
+.hi .meta .ago{margin-left:auto;color:#5a6270}
+#histClear{margin:10px 10px 0;background:none;border:1px solid var(--border);
+ color:var(--dim);font-size:12px;padding:7px 12px;border-radius:8px;cursor:pointer;
+ width:calc(100% - 20px);transition:color .14s,border-color .14s}
+#histClear:hover{color:#ff9b9b;border-color:#5a3030}
