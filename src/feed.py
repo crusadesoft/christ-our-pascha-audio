@@ -26,7 +26,7 @@ def hms(sec):
     return f"{sec//3600:d}:{sec%3600//60:02d}:{sec%60:02d}"
 
 def build(base, out="docs/feed.xml", start_date="2026-01-01"):
-    tracks = json.load(open("docs/tracks.json"))
+    tracks = json.load(open("work/tracks.json"))
     base = base.rstrip("/")
     d0 = datetime.fromisoformat(start_date).replace(tzinfo=timezone.utc)
     items = []
