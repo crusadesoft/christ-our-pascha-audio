@@ -173,6 +173,8 @@ $('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();let n=0
  $('npSub').textContent=v?n+' matches':'Christ Our Pascha'});
 $('link').onclick=()=>{const u=location.origin+location.pathname+'#t='+Math.round(globalTime());
  navigator.clipboard.writeText(u).then(()=>toast('Link copied — opens here'),()=>toast(u))};
+$('rss').onclick=()=>{const u=location.href.split('#')[0].replace(/[^/]*$/,'')+'feed.xml';
+ navigator.clipboard.writeText(u).then(()=>toast('Feed URL copied — paste it into a podcast app'),()=>toast(u))};
 function applyHash(){const h=location.hash;
  let m=h.match(/[#&]t=(\d+(?:\.\d+)?)/); if(m){seekGlobal(parseFloat(m[1]),false);return true}
  m=h.match(/[#&]p=(\d+)/);
