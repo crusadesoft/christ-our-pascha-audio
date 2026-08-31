@@ -9,7 +9,7 @@ import os, re, json
 
 SRC = "vendor/node_modules/lucide-static/icons"
 NEEDED = ["menu", "x", "search", "link-2", "play", "pause", "skip-back",
-          "skip-forward", "rotate-ccw", "rotate-cw", "gauge", "book-open",
+          "skip-forward", "rotate-ccw", "rotate-cw", "gauge",
           "info", "headphones", "rss", "download", "audio-lines",
           "chevron-right", "list-music"]
 

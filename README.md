@@ -106,7 +106,7 @@ canonical base when regenerating the feed.
 ```
 docs/
   index.html    reader: 78 audio tracks, 232 navigation marks, deep links
-  text.html     the complete narration text, print-styled
+  subscribe.html  the podcast feed address, with instructions
   about.html    colophon: AI disclosure, sources, editorial decisions, checks
   audio/*.mp3   78 tracks, ~351 MB, largest 8.9 MB
   data.json     tracks + navigation marks + 5,863 timed cues

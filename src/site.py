@@ -30,14 +30,13 @@ ICONS = None   # filled at build time from the lucide-static package
 NAV = """<nav class="nav">
 <span class="brand">__I_audio-lines__ Christ Our Pascha</span>
 <a href="index.html"{a0}>__I_headphones__<span>Listen</span></a>
-<a href="text.html"{a1}>__I_book-open__<span>Text</span></a>
-<a href="subscribe.html"{a2}>__I_rss__<span>Subscribe</span></a>
-<a href="about.html"{a3}>__I_info__<span>About</span></a>
+<a href="subscribe.html"{a1}>__I_rss__<span>Subscribe</span></a>
+<a href="about.html"{a2}>__I_info__<span>About</span></a>
 </nav>"""
 
 def nav(active):
     return NAV.format(**{f"a{i}": ' class="on"' if i == active else ""
-                         for i in range(4)})
+                         for i in range(3)})
 
 # Shared unlock. The payload is AES-GCM; the password derives the key, so
 # stepping past the prompt in devtools yields nothing.
@@ -332,61 +331,6 @@ useful way to report a mispronunciation or a passage that reads wrongly.</p>
 __DOWNLOAD__
 </div></body></html>"""
 
-TEXT = """<!doctype html><html><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
-<title>Christ Our Pascha \u2014 Narration text</title>
-<link rel="stylesheet" href="style.css">
-<style>
-.wrap{max-width:820px}
-.th{color:var(--gold);font-weight:620;font-size:18px;margin:30px 0 10px}
-.tp{color:var(--mint);font-weight:700;font-size:21px;margin:40px 0 12px;
- text-transform:uppercase;letter-spacing:.04em}
-.tq{color:#b6bfcc;font-style:italic;margin:0 0 12px;padding-left:20px;
- border-left:3px solid var(--surface-3)}
-.tb2{margin:0 0 13px}
-.tn{color:var(--dim);font-size:11.5px;margin-right:9px;font-weight:600;
- font-variant-numeric:tabular-nums}
-@media print{
- :root{--bg:#fff;--text:#000;--muted:#444;--dim:#777;--surface-3:#ccc}
- body{background:#fff;color:#000}.nav{display:none}
- .th,.tp{color:#000}.tq{color:#333}a{color:#000}}
-</style></head><body>
-__NAV__
-<div class="wrap">
-<h1>Narration text</h1>
-<p class="lede">Exactly what is spoken, in order \u2014 including paragraph
-numbers and quotation attributions, and excluding what was omitted.</p>
-<div id="body"><p style="color:var(--dim)">Unlocking\u2026</p></div>
-</div>
-__GATE__
-<script>
-gateStart(d=>{
- const esc=s=>s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
- const out=[]; let lastPara=null, words=0, cur=null, curKind=null;
- // cues are sentences; regroup them back into blocks for reading
- for(const c of d.c){
-  const kind=c[3], para=c[2];
-  // group consecutive sentences back into blocks: quotes run several\n  // sentences long, headings and part titles are always their own\n  const isNew = cur===null || curKind!==kind || kind==='H' || kind==='P'\n                || (kind==='B' && para && para!==lastPara);
-  if(isNew){ cur={kind:kind,para:para,parts:[]}; out.push(cur); curKind=kind }
-  if(para) lastPara=para;
-  cur.parts.push(c[4]); words+=c[4].split(/\\s+/).length;
- }
- const h=[];
- for(const b of out){
-  let t=esc(b.parts.join(' '));
-  if(b.kind==='P') h.push('<div class="tp">'+t+'</div>');
-  else if(b.kind==='H') h.push('<div class="th">'+t+'</div>');
-  else if(b.kind==='Q') h.push('<p class="tq">'+t+'</p>');
-  else{ if(b.para){ t=t.replace(new RegExp('^'+b.para+'\\\\.\\\\s*'),'');
-         h.push('<p class="tb2"><span class="tn">'+b.para+'</span>'+t+'</p>') }
-        else h.push('<p class="tb2">'+t+'</p>') }
- }
- document.getElementById('body').innerHTML=h.join('\\n');
- document.querySelector('.lede').textContent+=' '+words.toLocaleString()+' words.';
-});
-</script></body></html>"""
-
 SUBSCRIBE = """<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#13161c"><meta name="robots" content="noindex,nofollow">
@@ -532,14 +476,13 @@ def build(m4b_url, base=""):
     if m4b_url:
         dl = ('<h2>Download</h2><p><a href="%s">Download all tracks</a></p>'
               % html.escape(m4b_url))
-    write("about.html", page(ABOUT, 3,
+    write("about.html", page(ABOUT, 2,
           __LUFS__=lufs, __PEAK__=peak,
           __DUR__=f"{int(total//3600)} h {int(total%3600//60)} m",
           __NTR__=str(len(tracks)), __NCH__=str(len(chapters)),
           __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl))
 
-    write("text.html", page(TEXT, 1))
-    write("subscribe.html", page(SUBSCRIBE, 2, __FEED__=feed_url,
+    write("subscribe.html", page(SUBSCRIBE, 1, __FEED__=feed_url,
           __NTR__=str(len(tracks))))
 if __name__ == "__main__":
     import sys
