@@ -104,6 +104,8 @@ __NAV__
      <input type="search" id="q" placeholder="Search the text\u2026"></div>
    <button class="iconbtn" id="link" title="Copy a link to this moment">
      __I_link-2__<span>Copy link</span></button>
+   <button class="iconbtn" id="rss" title="Subscribe in a podcast app">
+     __I_rss__<span>Feed</span></button>
  </div>
  <div id="warn" style="display:none"></div>
  <div id="txt"><div class="inner"></div></div>
@@ -320,6 +322,22 @@ present. Pronunciation was hand-tuned for __NLEX__ terms (Pascha, Proskomide,
 Theotokos, Sheptytsky and others). Remaining pronunciation errors are the most
 likely defect, and the reason for this review.</div>
 
+<h2>Listening in a podcast app</h2>
+<p>The recording is also published as a podcast feed. Most podcast apps
+(Apple Podcasts, Overcast, Pocket Casts, Podcast Addict) let you add a feed by
+URL, and they handle offline download, resuming where you left off, and
+playback speed better than any web page can.</p>
+<p style="margin:14px 0"><code style="font-size:13px;user-select:all">__FEED__</code></p>
+<p style="font-size:14px;color:var(--muted)">In most apps: look for
+\u201cAdd a show by URL\u201d, \u201cAdd from URL\u201d, or
+\u201cSubscribe by URL\u201d, and paste the address above. On the
+<a href="index.html">Listen</a> page the <strong>Feed</strong> button copies it
+for you.</p>
+<div class="note"><strong>The feed is not password protected.</strong> Podcast
+apps cannot decrypt the payload the website uses, so anyone given the feed
+address can subscribe without the password. The episode addresses are not
+guessable, but please share the feed URL only with reviewers.</div>
+
 <h2>Reporting a problem</h2>
 <p>On the <a href="index.html">Listen</a> page, press <strong>Copy link</strong>
 at any moment to get a URL that opens at that exact point. That is the most
@@ -389,7 +407,7 @@ def icons_into(text, ic):
     return text
 
 
-def build(m4b_url):
+def build(m4b_url, base=""):
     import icons as iconmod
     ic = iconmod.load()
     T, tracks, chapters, cues = load()
@@ -430,7 +448,8 @@ def build(m4b_url):
           __LUFS__=lufs, __PEAK__=peak,
           __DUR__=f"{int(total//3600)} h {int(total%3600//60)} m",
           __NTR__=str(len(tracks)), __NCH__=str(len(chapters)),
-          __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl))
+          __NLEX__=str(len(lexicon.OVERRIDES)), __DOWNLOAD__=dl,
+          __FEED__=(base.rstrip("/") + "/feed.xml") if base else "feed.xml"))
 
     write("text.html", page(TEXT, 1))
 if __name__ == "__main__":
@@ -438,7 +457,9 @@ if __name__ == "__main__":
     sys.path.insert(0, "src")
     ap = argparse.ArgumentParser()
     ap.add_argument("--m4b-url", default=M4B_URL_DEFAULT,
-                    help="GitHub Release asset URL for the full M4B")
+                    help="download URL for the complete audio, if any")
+    ap.add_argument("--base", default="",
+                    help="public site URL, used for the printed feed address")
     a = ap.parse_args()
-    build(a.m4b_url)
+    build(a.m4b_url, a.base)
     print("\nsite built in docs/")
