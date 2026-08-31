@@ -95,6 +95,11 @@ Review page (needs HTTP Range for seeking — the stock `http.server` will not d
 
 ## The review site (GitHub Pages)
 
+Live at <https://crusadesoft.com/christ-our-pascha-audio/> — the crusadesoft
+org has a verified custom domain, so org Pages serve from `crusadesoft.com`
+and the `github.io` address 301-redirects there. Use the custom domain as the
+canonical base when regenerating the feed.
+
 `docs/` is a self-contained static site. Enable Pages on the repo with
 **Source: main branch, /docs folder**.
 
@@ -114,7 +119,7 @@ Rebuild after any change to the audio or text:
 ```bash
 .venv/bin/python src/tracks.py                       # cut tracks from the master
 .venv/bin/python src/site.py                         # pages + data.json
-.venv/bin/python src/feed.py --base https://USER.github.io/REPO
+.venv/bin/python src/feed.py --base https://crusadesoft.com/christ-our-pascha-audio
 ```
 
 ### Why tracks and navigation marks differ
